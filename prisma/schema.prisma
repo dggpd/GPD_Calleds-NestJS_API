@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CalledType {
+  COMPUTER_ISSUE
+  SOFTWARE_ISSUE
+  PERIPHERAL_ISSUE
+  PRINT_ISSUE
+  NETWORK_ACCESS_ISSUE
+  INTERNET_ACCESS_ISSUE
+}
+
+enum CalledStatus {
+  PENDING
+  OPENED
+  NO_ANSWER
+  CANCELED
+  RESOLVED
+  NO_SOLUTION
+}
+
+enum CalledDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model User {
+  id Int @id @default(autoincrement()) // ID
+
+  // User fields
+  cpf String @unique @db.VarChar(11)
+  name String
+  sector String @db.VarChar(16)
+  phone String @db.VarChar(11)
+
+  // authomatic
+  isAdmin Boolean @default(false)
+  password String?
+  createdAt DateTime @default(now())
+  calleds Called[]
+
+  @@index([cpf])
+  @@map("user")
+}
+
+model Called {
+  id Int @id @default(autoincrement()) // ID
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  // Called Fields
+  type CalledType
+  description String @db.VarChar(500)
+  status CalledStatus @default(PENDING)
+
+  // admin fields
+  code String? @db.VarChar(24)
+  difficulty CalledDifficulty?
+  notes String? @db.VarChar(500)
+
+  // authomatic
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@index([authorId])
+  @@map("called")
+}
