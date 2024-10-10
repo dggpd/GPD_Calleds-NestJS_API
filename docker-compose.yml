@@ -1,4 +1,15 @@
 services:
+  app:
+    build: .docker/angular
+    entrypoint: ./entrypoint.sh
+    container_name: gpd-calleds-app
+    ports:
+      - "4200:4200"
+    volumes:
+      - .docker/angular:/home/node/app
+    depends_on:
+      - api
+
   api:
     build: .
     entrypoint: .docker/entrypoint.sh
