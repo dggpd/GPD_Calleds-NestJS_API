@@ -1,3 +1,4 @@
+import { $Enums } from '@prisma/client';
 import {
   Body,
   Controller,
@@ -60,7 +61,7 @@ export class CalledController {
   @UseGuards(AdminGuard)
   @Get(['access-admin/calleds', 'acess-admin/user/:id/calleds'])
   ADM_READ(
-    @Query() query: ReadQueryAdm,
+    @Query() query: ReadQueryAdm & { status?: $Enums.CalledStatus },
     @Param('id') authorId?: string,
   ): Promise<CalledEntity[]> {
     return this.service.admRead(query, +authorId);

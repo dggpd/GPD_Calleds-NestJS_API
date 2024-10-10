@@ -67,7 +67,7 @@ export class CalledRepository {
     try {
       const called = await this.prisma.called.update({
         where: { id },
-        data: dto,
+        data: { ...dto, updatedAt: new Date() },
       });
 
       return {
@@ -109,7 +109,7 @@ export class CalledRepository {
       try {
         const called = await this.prisma.called.update({
           where: { id },
-          data: { status: 'PENDING' },
+          data: { status: 'PENDING', updatedAt: new Date() },
         });
 
         return {
@@ -141,7 +141,7 @@ export class CalledRepository {
     try {
       await this.prisma.called.update({
         where: { id },
-        data: { status: 'CANCELED' },
+        data: { status: 'CANCELED', updatedAt: new Date() },
       });
 
       return {
@@ -161,6 +161,7 @@ export class CalledRepository {
       cpf: string,
       name: string,
       sector: string,
+      status: $Enums.CalledStatus,
       authorId?: number,
     ): Promise<CalledEntity[]> => {
       if (authorId) {
@@ -171,7 +172,11 @@ export class CalledRepository {
         if (!user) throw new NotFoundException('Usuário não encontrado.');
 
         return await this.prisma.called.findMany({
-          where: { authorId },
+          where: {
+            authorId,
+            status,
+            NOT: [{ status: 'CANCELED' }],
+          },
         });
       }
 
@@ -188,6 +193,8 @@ export class CalledRepository {
               },
             })
             .then(users => users.map(({ id }) => ({ authorId: id }))),
+          status,
+          NOT: [{ status: 'CANCELED' }],
         },
       });
     },
@@ -199,7 +206,7 @@ export class CalledRepository {
         try {
           await this.prisma.called.update({
             where: { id },
-            data: { status: dto.status },
+            data: { status: dto.status, updatedAt: new Date() },
           });
 
           return {
@@ -224,7 +231,7 @@ export class CalledRepository {
       try {
         await this.prisma.called.update({
           where: { id },
-          data: dto,
+          data: { ...dto, updatedAt: new Date() },
         });
 
         return {

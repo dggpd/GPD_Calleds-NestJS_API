@@ -1,3 +1,4 @@
+import { $Enums } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Default } from 'src/shared/interfaces/default.interface';
@@ -35,13 +36,19 @@ export class CalledService {
   }
 
   admRead(
-    { cpf, name, sector }: ReadQueryAdm,
+    {
+      cpf,
+      name,
+      sector,
+      status,
+    }: ReadQueryAdm & { status?: $Enums.CalledStatus },
     authorId?: number,
   ): Promise<CalledEntity[]> {
     return this.repository.adm.read(
       cpf ?? '',
       name ?? '',
       sector ?? '',
+      status ?? 'PENDING',
       authorId,
     );
   }
