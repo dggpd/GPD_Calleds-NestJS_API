@@ -4,11 +4,12 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CalledModule } from './routes/called/called.module';
 import { UserModule } from './routes/user/user.module';
 import { AddRequestMiddleware } from './shared/middlewares/add-request.middleware';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UserModule],
+  imports: [ConfigModule.forRoot(), AuthModule, UserModule, CalledModule],
   controllers: [AppController],
   providers: [AppService],
 })
