@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    entrypoint: .docker/entrypoint.sh
+    container_name: gpd-calleds-api
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    volumes:
+      - .:/home/node/api
+    depends_on:
+      - db
+
+  db:
+    build: .docker/postgres
+    container_name: gpd-calleds-db
+    restart: always
+    tty: true
+    ports:
+      - "5432:5432"
+    volumes:
+      - .docker/dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=gpd-calleds-api
